@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 const PETALS = [
   { left: '6%',  delay: '0s',  dur: '22s', size: 14 },
@@ -286,34 +287,23 @@ export default function Hero() {
           overflow: 'hidden',
         }}
       >
-        {/* Warm gradient fill */}
+        {/* Real photo — mom with hydrangea on the terrace */}
+        <Image
+          src="/images/IMG-20250617-WA0015.jpg"
+          alt="Mom holding a hydrangea on the terrace garden"
+          fill
+          priority
+          sizes="45vw"
+          style={{ objectFit: 'cover', objectPosition: 'center 30%' }}
+        />
+
+        {/* Top fade — keeps navbar links readable over the photo */}
         <div style={{
           position: 'absolute',
           inset: 0,
-          background: 'linear-gradient(160deg, #EDE5DA 0%, #D9CAB4 45%, #C9B89A 100%)',
+          background: 'linear-gradient(to bottom, rgba(250,250,247,0.55) 0%, rgba(250,250,247,0.1) 28%, rgba(30,27,24,0.25) 100%)',
+          zIndex: 1,
         }} />
-
-        {/* Giant breathing botanical symbol */}
-        <div
-          aria-hidden="true"
-          style={{
-            position: 'absolute',
-            inset: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            animation: 'breatheSymbol 7s ease-in-out infinite',
-            pointerEvents: 'none',
-          }}
-        >
-          <span style={{
-            fontFamily: 'var(--font-display)',
-            fontSize: '22rem',
-            color: 'var(--color-accent-dark)',
-            userSelect: 'none',
-            lineHeight: 1,
-          }}>✿</span>
-        </div>
 
         {/* Botanical compass-rose SVG ring */}
         <svg
@@ -327,7 +317,7 @@ export default function Hero() {
             width: '100%',
             height: '100%',
             pointerEvents: 'none',
-            zIndex: 2,
+            zIndex: 3,
           }}
         >
           {/* Outer dashed ring — rotates CW */}

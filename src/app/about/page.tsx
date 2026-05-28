@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 const values = [
   {
@@ -100,16 +101,21 @@ export default function AboutPage() {
           </p>
         </div>
 
-        {/* Right */}
-        <div style={{
-          background: 'linear-gradient(145deg, #E8DDD0 0%, #D4C5B0 50%, #C9B89A 100%)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '14rem',
-          opacity: 1,
-        }}>
-          <span style={{ opacity: 0.12 }}>✿</span>
+        {/* Right — terrace garden at golden hour */}
+        <div style={{ position: 'relative', overflow: 'hidden' }}>
+          <Image
+            src="/images/IMG-20251127-WA0049.jpg"
+            alt="The terrace flower garden at golden hour"
+            fill
+            style={{ objectFit: 'cover', objectPosition: 'center 40%' }}
+            sizes="50vw"
+          />
+          {/* Top fade so About page header text stays readable */}
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(to bottom, rgba(250,250,247,0.45) 0%, transparent 35%)',
+          }} />
         </div>
       </div>
 
