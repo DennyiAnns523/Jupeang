@@ -3,9 +3,13 @@ import { SanityImageSource } from "@sanity/image-url/lib/types/types";
 
 import { dataset, projectId } from '../env'
 
-// https://www.sanity.io/docs/image-url
-const builder = createImageUrlBuilder({ projectId, dataset })
+const builder = projectId
+  ? createImageUrlBuilder({ projectId, dataset })
+  : null
+
+type ImageBuilder = ReturnType<typeof createImageUrlBuilder>
 
 export const urlFor = (source: SanityImageSource) => {
+  if (!builder) return { url: () => '' } as ReturnType<ImageBuilder['image']>
   return builder.image(source)
 }
