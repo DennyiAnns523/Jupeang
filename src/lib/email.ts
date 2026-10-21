@@ -11,10 +11,11 @@ function formatItems(items: OrderPayload['items']): string {
   }).join('\n\n')
 }
 
-export async function sendOrderEmails(order: OrderPayload): Promise<void> {
+export async function sendOrderEmails(order: OrderPayload, { paid = false } = {}): Promise<void> {
+  const kind = paid ? 'PAID ORDER' : 'ORDER REQUEST'
   if (!process.env.RESEND_API_KEY) {
     // Email not configured yet — print to server console so nothing is lost
-    console.log('\n───── NEW ORDER REQUEST ─────')
+    console.log(`\n───── NEW ${kind} ─────`)
     console.log(`Ref:      ${order.orderRef}`)
     console.log(`Customer: ${order.customerName} <${order.customerEmail}>`)
     console.log(`Phone:    ${order.customerPhone}`)
@@ -37,9 +38,9 @@ export async function sendOrderEmails(order: OrderPayload): Promise<void> {
     await resend.emails.send({
       from: fromAddr,
       to: ownerEmail,
-      subject: `New Order Request ${order.orderRef} — ${order.customerName}`,
+      subject: `New ${paid ? 'Paid Order' : 'Order Request'} ${order.orderRef} — ${order.customerName}`,
       text: [
-        'NEW ORDER REQUEST — JUPEANG',
+        `NEW ${kind} — JUPEANG`,
         `Order: ${order.orderRef}`,
         '',
         `Customer: ${order.customerName}`,
@@ -65,11 +66,13 @@ export async function sendOrderEmails(order: OrderPayload): Promise<void> {
   await resend.emails.send({
     from: fromAddr,
     to: order.customerEmail,
-    subject: `Your Jupeang order request — ${order.orderRef}`,
+    subject: `Your Jupeang ${paid ? 'order' : 'order request'} — ${order.orderRef}`,
     text: [
       `Hi ${order.customerName.split(' ')[0]},`,
       '',
-      `Thank you for your order request. We've received it and will contact you at ${order.customerEmail} within 2 hours to confirm and arrange payment.`,
+      paid
+        ? `Thank you for your order. Your payment was received and we're preparing your flowers.`
+        : `Thank you for your order request. We've received it and will contact you at ${order.customerEmail} within 2 hours to confirm and arrange payment.`,
       '',
       `YOUR ORDER  ${order.orderRef}`,
       '──────────────────────────────',

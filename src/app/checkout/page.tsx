@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useCart } from '@/lib/cartContext'
 import Link from 'next/link'
 
 const steps = ['Delivery', 'Review', 'Confirmed']
+const paymentsEnabled = process.env.NEXT_PUBLIC_PAYMENTS_ENABLED === 'true'
 
 const inputStyle = {
   width: '100%',
@@ -29,10 +30,19 @@ const labelStyle = {
 }
 
 export default function CheckoutPage() {
-  const { items, quantities, total } = useCart()
+  const { items, quantities, total, clear } = useCart()
   const [step, setStep] = useState(0)
   const [submitting, setSubmitting] = useState(false)
   const [orderRef, setOrderRef] = useState('')
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    // Returning from Stripe's cancel URL; read after mount since this page is static
+    if (new URLSearchParams(window.location.search).has('cancelled')) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setError("Payment was cancelled. Your bag is still here whenever you're ready.")
+    }
+  }, [])
   const [form, setForm] = useState({
     firstName: '', lastName: '', email: '', phone: '',
     address: '', city: '', postcode: '', notes: '',
@@ -47,38 +57,42 @@ export default function CheckoutPage() {
 
   const submitOrder = async () => {
     setSubmitting(true)
+    setError('')
     try {
-      const payload = {
-        customerName: `${form.firstName} ${form.lastName}`,
-        customerEmail: form.email,
-        customerPhone: form.phone,
-        address: form.address,
-        city: form.city,
-        postcode: form.postcode,
-        notes: form.notes,
-        items: items.map((item, i) => ({
-          name: item.name,
-          size: item.size,
-          price: item.price,
-          quantity: quantities[i] ?? 1,
-          addons: item.addons,
-          message: item.message,
-          deliveryDate: item.deliveryDate,
-        })),
-        total,
-      }
-      const res = await fetch('/api/orders', {
+      const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          delivery: form,
+          items: items.map((item, i) => ({
+            productId: item.productId,
+            size: item.size,
+            addons: item.addons,
+            quantity: quantities[i] ?? 1,
+            message: item.message,
+            deliveryDate: item.deliveryDate,
+          })),
+        }),
       })
       const data = await res.json()
+      if (!res.ok) {
+        const firstField = data.fields ? Object.values(data.fields)[0] : ''
+        setError([data.error, firstField].filter(Boolean).join(' ') || 'Something went wrong. Please try again.')
+        setSubmitting(false)
+        return
+      }
+      if (data.url) {
+        // Stripe-hosted payment; the bag is cleared on the success page
+        window.location.assign(data.url)
+        return
+      }
       setOrderRef(data.orderRef ?? '')
+      clear()
+      setStep(2)
     } catch {
-      // Silent — customer still sees confirmation, order logged server-side
+      setError("We couldn't reach the shop. Check your connection and try again.")
     }
     setSubmitting(false)
-    setStep(2)
   }
 
   return (
@@ -169,6 +183,17 @@ export default function CheckoutPage() {
             }}>
               Delivery Details
             </h2>
+
+            {error && (
+              <div role="alert" style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: '0.8rem',
+                color: 'var(--color-accent-dark)',
+                marginBottom: '24px',
+              }}>
+                {error}
+              </div>
+            )}
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
               <div>
@@ -386,15 +411,28 @@ export default function CheckoutPage() {
               borderLeft: '2px solid var(--color-accent)',
             }}>
               <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.8rem', lineHeight: 1.8, color: 'var(--color-text)' }}>
-                After you place your request, we'll contact you at <strong>{form.email}</strong> within 2 hours to confirm your order and arrange payment.
+                {paymentsEnabled
+                  ? <>You&apos;ll be taken to our secure payment page (Stripe). A confirmation will be sent to <strong>{form.email}</strong>.</>
+                  : <>After you place your request, we&apos;ll contact you at <strong>{form.email}</strong> within 2 hours to confirm your order and arrange payment.</>}
               </div>
             </div>
+
+            {error && (
+              <div role="alert" style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: '0.8rem',
+                color: 'var(--color-accent-dark)',
+                marginBottom: '20px',
+              }}>
+                {error}
+              </div>
+            )}
 
             {/* Actions */}
             <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
               <button
                 onClick={submitOrder}
-                disabled={submitting}
+                disabled={submitting || items.length === 0}
                 style={{
                   padding: '16px 48px',
                   backgroundColor: submitting ? 'var(--color-accent)' : 'var(--color-heading)',
@@ -408,7 +446,7 @@ export default function CheckoutPage() {
                   transition: 'background-color 300ms ease',
                 }}
               >
-                {submitting ? 'Sending…' : 'Place Order Request'}
+                {submitting ? 'Sending…' : paymentsEnabled ? 'Continue to Payment' : 'Place Order Request'}
               </button>
               <button
                 onClick={() => setStep(0)}

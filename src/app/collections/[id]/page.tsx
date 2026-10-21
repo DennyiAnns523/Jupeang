@@ -5,18 +5,11 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useCart } from '@/lib/cartContext'
 import { client, urlFor, type SanityProduct } from '@/lib/sanity'
+import { ADDONS, SIZES, unitPrice, type AddonId } from '@/lib/pricing'
+import { deliveryWindow } from '@/lib/delivery'
 
-const sizes = [
-  { label: 'Small',  description: '8–10 stems',  multiplier: 1   },
-  { label: 'Medium', description: '14–16 stems', multiplier: 1.4 },
-  { label: 'Large',  description: '20–24 stems', multiplier: 1.8 },
-]
-
-const addons = [
-  { id: 'vase',  label: 'Glass Vase',    price: 18 },
-  { id: 'choc',  label: 'Chocolates',    price: 12 },
-  { id: 'wrap',  label: 'Premium Wrap',  price: 8  },
-]
+const sizes = SIZES
+const addons = ADDONS
 
 export default function ProductPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -27,7 +20,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
   const [activeImg, setActiveImg] = useState(0)
 
   const [selectedSize, setSelectedSize]     = useState(0)
-  const [selectedAddons, setSelectedAddons] = useState<string[]>([])
+  const [selectedAddons, setSelectedAddons] = useState<AddonId[]>([])
   const [message, setMessage]               = useState('')
   const [deliveryDate, setDeliveryDate]     = useState('')
   const [added, setAdded]                   = useState(false)
@@ -36,13 +29,13 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
     // Try slug first, then fall back to treating id as a numeric index (legacy links)
     async function load() {
       try {
-        const bySlug = await client.fetch(
+        const bySlug = client ? await client.fetch(
           `*[_type == "product" && slug.current == $slug][0]{
             _id, name, "slug": slug.current, occasion, price, tag,
             description, careInstructions, image, gallery, featured, inStock
           }`,
           { slug: id }
-        )
+        ) : null
         setProduct(bySlug ?? null)
       } catch {
         setProduct(null)
@@ -81,21 +74,19 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
     )
   }
 
-  const basePrice   = Math.round(product.price * sizes[selectedSize].multiplier)
-  const addonTotal  = addons.filter(a => selectedAddons.includes(a.id)).reduce((s, a) => s + a.price, 0)
-  const total       = basePrice + addonTotal
+  const total       = unitPrice(product.price, sizes[selectedSize].label, selectedAddons)
 
   const allImages = [
     ...(product.image ? [product.image] : []),
     ...(product.gallery ?? []),
   ]
 
-  const toggleAddon = (addonId: string) =>
+  const toggleAddon = (addonId: AddonId) =>
     setSelectedAddons(prev => prev.includes(addonId) ? prev.filter(a => a !== addonId) : [...prev, addonId])
 
   const handleAdd = () => {
     addItem({
-      id: product._id as unknown as number,
+      productId: product._id,
       name: product.name,
       size: sizes[selectedSize].label,
       price: total,
@@ -108,9 +99,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
     setTimeout(() => setAdded(false), 2000)
   }
 
-  const tomorrow = new Date()
-  tomorrow.setDate(tomorrow.getDate() + 1)
-  const minDate = tomorrow.toISOString().split('T')[0]
+  const { minDate, maxDate } = deliveryWindow()
 
   const mainImageUrl = allImages[activeImg]
     ? urlFor(allImages[activeImg]).width(900).height(1125).url()
@@ -320,6 +309,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
             <input
               type="date"
               min={minDate}
+              max={maxDate}
               value={deliveryDate}
               onChange={e => setDeliveryDate(e.target.value)}
               style={{

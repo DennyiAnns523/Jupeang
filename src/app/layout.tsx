@@ -1,13 +1,15 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import './design.css'
+import './portal.css'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import CartDrawer from '@/components/layout/CartDrawer'
 import { CartProvider } from '@/lib/cartContext'
 
 export const metadata: Metadata = {
-  title: 'Jupeang',
-  description: 'Jupeang — Konyak for Flower. Thoughtfully arranged, same-day delivered.',
+  title: 'Jupeang — Objects, stories & growing things',
+  description: 'A shop, a story, a collection of moments. Discover the world of Jupeang.',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

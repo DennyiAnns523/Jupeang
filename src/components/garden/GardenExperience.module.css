@@ -1,0 +1,95 @@
+.world { position: relative; isolation: isolate; min-height: 800px; height: 100svh; background: #18241d; color: #f8f4e9; overflow: hidden; font-family: Arial, sans-serif; }
+.world button { font: inherit; color: inherit; cursor: pointer; background: none; border: 0; }
+.world button:focus-visible, .world a:focus-visible { outline: 2px solid #eadbb7; outline-offset: 7px; }
+.scenery, .shade { position: absolute; inset: 0; z-index: -2; }
+.scene { object-fit: cover; opacity: 0; transition: opacity 700ms ease; }
+.visible { opacity: 1; }
+.shade { z-index: -1; background: linear-gradient(90deg, rgba(10,24,19,.78), rgba(10,24,19,.3) 46%, rgba(10,24,19,.03) 78%), linear-gradient(0deg, rgba(9,21,17,.92), transparent 33%, transparent 72%, rgba(9,21,17,.62)); transition: opacity 400ms; }
+.lightShade { opacity: .55; }
+.header { margin: 0 4%; height: 119px; border-bottom: 1px solid #ffffff30; display: flex; justify-content: space-between; align-items: center; gap: 30px; }
+.brand { font-family: Georgia, serif; font-size: 43px; letter-spacing: -2px; line-height: 1; }
+.brand span { display: block; font-family: Arial, sans-serif; font-size: 8px; letter-spacing: 3px; margin-top: 12px; }
+.nav { display: flex; gap: 38px; font-size: 12px; }
+.nav button, .nav a { padding: 12px 0; position: relative; }
+.nav .currentNav::after { content: ''; height: 3px; width: 3px; background: #e7d7ac; border-radius: 50%; position: absolute; bottom: 0; left: 50%; }
+.nav a span { margin-left: 8px; }
+.bag { font-size: 12px !important; white-space: nowrap; }
+.bag span { display: inline-grid; place-items: center; width: 29px; height: 29px; border: 1px solid #ffffff50; border-radius: 50%; margin-left: 10px; font-size: 10px; }
+.sideNote { position: absolute; left: 4%; top: 39%; writing-mode: vertical-rl; transform: rotate(180deg); font-size: 8px; letter-spacing: 3px; color: #e2e5d7b0; }
+.intro { position: absolute; left: 10%; top: 28%; max-width: 670px; }
+.eyebrow { font-size: 9px; letter-spacing: 2.7px; display: flex; align-items: center; gap: 13px; color: #e7ddc4; }
+.eyebrow span { width: 23px; height: 1px; background: #e7ddc4; }
+.intro h1 { color: inherit; font-family: Georgia, serif; font-size: clamp(52px, 5.9vw, 94px); line-height: 1.1; font-weight: 400; letter-spacing: -4px; margin: 30px 0 25px; }
+.intro h1 em { font-weight: 400; color: #ede5cf; }
+.intro p { color: #f2f0e2cf; font-size: 13px; line-height: 1.9; font-weight: 300; }
+.explore { margin-top: 37px; padding-bottom: 12px !important; border-bottom: 1px solid #eee7d590 !important; font-size: 12px !important; }
+.explore span { margin-left: 35px; font-size: 19px; }
+.hotspot { position: absolute; display: flex; align-items: center; gap: 13px; text-align: left; }
+.hotspotIcon { display: grid; place-items: center; width: 42px; height: 42px; border: 1px solid #fff9; border-radius: 50%; background: #23392a44; backdrop-filter: blur(8px); font-size: 23px; transition: background 200ms; }
+.hotspot:hover .hotspotIcon { background: #f6f0df; color: #23392a; }
+.hotspotText { font-family: Georgia, serif; font-style: italic; font-size: 17px; text-shadow: 0 1px 8px #000; }
+.hotspotText small { display: block; font-family: Arial, sans-serif; font-style: normal; font-size: 7px; letter-spacing: 2px; margin-top: 8px; }
+.marginNote { position: absolute; right: 4%; bottom: 24%; text-align: right; }
+.marginNote > span { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; }
+.marginNote p { color: #f5efdf; font-family: Georgia, serif; font-style: italic; font-size: 19px; line-height: 1.5; margin-top: 13px; }
+.bottom { position: absolute; left: 4%; right: 4%; bottom: 31px; display: flex; align-items: center; justify-content: space-between; gap: 24px; border-top: 1px solid #ffffff35; padding-top: 24px; }
+.smallLabel { font-size: 8px; letter-spacing: 2px; }
+.location { display: flex; flex-direction: column; gap: 13px; font-size: 11px; }
+.location .smallLabel { color: #e5dec3aa; }
+.locationDot { color: #c8ba8d; margin: 0 8px; }
+.sceneNav { display: flex; gap: 23px; }
+.sceneNav button { display: flex; align-items: center; gap: 11px; opacity: .55; text-align: left; transition: opacity 200ms; }
+.sceneNav button:hover, .sceneNav .selectedScene { opacity: 1; }
+.thumb { width: 60px; height: 67px; position: relative; display: block; }
+.thumb img { object-fit: cover; }
+.selectedScene .thumb { outline: 1px solid #e8dcbd; outline-offset: 4px; }
+.sceneNav button > span:last-child { font-size: 10px; }
+.sceneNav small { display: block; font-size: 8px; letter-spacing: 2px; margin-bottom: 8px; color: #e7d7ac; }
+.viewActions { display: flex; flex-direction: column; gap: 15px; }
+.viewActions button { text-align: left; font-size: 10px; }
+.viewActions button span { font-size: 16px; margin-right: 8px; }
+.dialog { position: fixed; inset: 0; margin: auto; padding: 0; width: min(1100px, 92vw); max-height: 90svh; border: 1px solid #ffffff30; background: #efece2; color: #25372c; overflow: auto; }
+.dialog::backdrop { background: #08150de0; backdrop-filter: blur(10px); }
+.close { position: absolute; right: 14px; top: 14px; width: 40px; height: 40px; background: #efece2 !important; color: #25372c !important; border-radius: 50%; z-index: 2; font-size: 27px !important; }
+.album { padding: 24px; }
+.albumImage { height: 62svh; position: relative; background: #18251d; }
+.albumCaption { display: flex; justify-content: space-between; align-items: center; padding: 23px 10px 2px; gap: 12px; }
+.albumCaption h2 { font-family: Georgia, serif; font-size: 27px; margin: 10px 0 5px; color: #25372c; }
+.albumCaption p { font-size: 12px; }
+.albumArrows { display: flex; gap: 10px; }
+.albumArrows button { border: 1px solid #25372c50; width: 42px; height: 42px; border-radius: 50%; }
+.story { display: grid; grid-template-columns: 1fr 1fr; }
+.storyImage { position: relative; min-height: 650px; }
+.storyText { padding: 75px 48px 45px; }
+.storyText h2 { font-family: Georgia, serif; font-size: 47px; color: #25372c; margin: 25px 0; letter-spacing: -2px; }
+.storyText p { font-size: 14px; line-height: 1.9; margin-bottom: 18px; color: #52604f; }
+.storyText a { display: flex; justify-content: space-between; border-bottom: 1px solid #25372c40; padding: 15px 0; font-size: 12px; }
+.film { padding: 35px; background: #18251d; color: #efece2; }
+.film video { display: block; width: 100%; max-height: 70svh; margin: 24px 0 14px; }
+.film p { color: #efece2; font-family: Georgia, serif; font-style: italic; }
+@media (min-width: 1600px) { .intro { top: 30%; } }
+@media (max-width: 1100px) { .sceneNav { gap: 16px; } .sceneNav button > span:last-child { display: none; } .intro { left: 9%; } .hotspot { left: 76% !important; } .hotspotText { display: none; } .nav { gap: 25px; } }
+@media (max-width: 700px) {
+  .world { min-height: 760px; }
+  .header { margin: 0 6%; height: 125px; align-items: flex-start; padding-top: 23px; flex-wrap: wrap; gap: 0; }
+  .brand { font-size: 33px; } .brand span { font-size: 6px; letter-spacing: 2px; margin-top: 7px; }
+  .bag { padding-top: 5px; }
+  .nav { order: 3; width: 100%; justify-content: space-between; gap: 10px; font-size: 11px; padding: 8px 0; }
+  .sideNote, .marginNote, .location { display: none; }
+  .intro { left: 7%; right: 7%; top: 25%; }
+  .eyebrow { font-size: 7px; letter-spacing: 1.8px; }
+  .intro h1 { font-size: clamp(43px, 10.5vw, 65px); letter-spacing: -2.5px; margin: 25px 0 20px; }
+  .intro p { font-size: 12px; max-width: 300px; }
+  .explore { margin-top: 25px; }
+  .hotspot { top: 65% !important; left: auto !important; right: 8%; }
+  .hotspotIcon { width: 39px; height: 39px; }
+  .bottom { left: 7%; right: 7%; bottom: 22px; padding-top: 19px; gap: 18px; }
+  .sceneNav { gap: 13px; } .thumb { width: 43px; height: 53px; }
+  .viewActions button { font-size: 9px; } .viewActions { gap: 10px; }
+  .shade { background: linear-gradient(90deg, #0a1813a6, #0a181330), linear-gradient(0deg, #091511ed, transparent 38%, #09151133 65%, #09151188); }
+  .story { grid-template-columns: 1fr; } .storyImage { min-height: 280px; } .storyText { padding: 30px; }
+  .storyText h2 { font-size: 37px; } .album { padding: 12px; } .albumImage { height: 57svh; }
+  .albumCaption { padding: 20px 4px 5px; } .albumCaption h2 { font-size: 21px; } .albumCaption p { font-size: 11px; }
+  .albumArrows { gap: 5px; } .albumArrows button { width: 33px; height: 33px; } .film { padding: 20px; }
+}
+@media (prefers-reduced-motion: reduce) { .world *, .world *::before, .world *::after { transition: none !important; } }

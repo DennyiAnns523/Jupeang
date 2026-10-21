@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Jupeang
 
-## Getting Started
+Florist shop and garden journal: Next.js 16, Sanity CMS for content, Postgres + Prisma for customer data, Auth.js for accounts, and Stripe for payments.
 
-First, run the development server:
+## What lives where
+
+| Concern | Where |
+| --- | --- |
+| Products, garden posts, images | Sanity (`/studio`) |
+| Users, orders, subscriptions, rate limits | Postgres (`prisma/schema.prisma`) |
+| Sign-in (email + password, optional Google) | Auth.js, `src/lib/auth.ts` |
+| Payments and subscriptions | Stripe Checkout + webhook (`src/app/api/webhooks/stripe`) |
+| Order emails | Resend (`src/lib/email.ts`); logs to the console when not configured |
+
+## Local setup
 
 ```bash
+npm install
+cp .env.example .env.local      # then fill in AUTH_SECRET (npx auth secret) and Sanity
+npm run db:up                   # Postgres in Docker on :5432
+npm run db:migrate              # create tables
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Create an account at `/auth/signup`, then make yourself an admin:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run make-admin -- you@example.com
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The admin dashboard is at `/admin` (orders, statuses, subscriptions).
 
-## Learn More
+### Stripe locally
 
-To learn more about Next.js, take a look at the following resources:
+1. Put your **test** secret key in `STRIPE_SECRET_KEY` and set `NEXT_PUBLIC_PAYMENTS_ENABLED=true`.
+2. Run `stripe listen --forward-to localhost:3000/api/webhooks/stripe` and copy the `whsec_…` it prints into `STRIPE_WEBHOOK_SECRET`.
+3. Pay with card `4242 4242 4242 4242`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Without Stripe keys, checkout still works: orders are saved as **Requested** and emailed to the shop for offline payment.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deploying (Vercel)
 
-## Deploy on Vercel
+1. Create a Postgres database (Neon, Supabase or Vercel Postgres) and set `DATABASE_URL`.
+2. Set every variable from `.env.example` in the Vercel project (`NEXT_PUBLIC_SITE_URL` = your domain).
+3. Apply migrations against production: `DATABASE_URL=… npm run db:deploy`.
+4. In Stripe → Developers → Webhooks, add `https://<domain>/api/webhooks/stripe` with events:
+   `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed`, `checkout.session.expired`, `customer.subscription.updated`, `customer.subscription.deleted`, `customer.subscription.paused`, `customer.subscription.resumed`.
+5. Turn on the Stripe customer portal (Settings → Billing → Customer portal) so subscribers can pause and cancel.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Security notes
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Prices are recomputed on the server from Sanity and `src/lib/pricing.ts`; the browser's prices are ignored.
+- Passwords are hashed with bcrypt (cost 12). Login, signup, checkout and password changes are rate-limited in Postgres.
+- Admin access is checked against the database on every request; non-admins get a 404.
+- Stripe webhooks are signature-verified and processed once per event.
+- JSON API routes reject cross-origin requests; server actions get Next.js's built-in origin check.
+- Security headers and a Content Security Policy are set in `next.config.ts` (Studio is exempt from the CSP).

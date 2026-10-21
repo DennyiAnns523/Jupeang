@@ -2,6 +2,7 @@ import { client, queries, type SanityGardenPost } from '@/lib/sanity'
 import GardenClient from './GardenClient'
 
 async function getPosts(): Promise<SanityGardenPost[]> {
+  if (!client) return []
   try {
     return await client.fetch(queries.allGardenPosts)
   } catch {

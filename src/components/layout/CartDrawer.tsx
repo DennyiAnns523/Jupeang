@@ -29,7 +29,7 @@ export default function CartDrawer() {
         top: 0,
         right: 0,
         bottom: 0,
-        width: '420px',
+        width: 'min(420px, 100vw)',
         backgroundColor: 'var(--color-bg)',
         zIndex: 70,
         transform: isOpen ? 'translateX(0)' : 'translateX(100%)',

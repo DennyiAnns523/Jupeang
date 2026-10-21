@@ -1,224 +1,152 @@
-'use client'
-
-import { useState } from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
-import { urlFor, type SanityProduct } from '@/lib/sanity'
-
-const FILTERS = ['All', 'Romance', 'Everyday', 'Weddings', 'Celebrations', 'Sympathy', 'Birthdays']
-
-function ProductCard({ product }: { product: SanityProduct }) {
-  const [hovered, setHovered] = useState(false)
-  const imageUrl = product.image ? urlFor(product.image).width(600).height(750).url() : null
-
+"use client";
+import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { urlFor, type SanityProduct } from "@/lib/sanity";
+export default function CollectionsClient({
+  products,
+}: {
+  products: SanityProduct[];
+}) {
+  const [filter, setFilter] = useState("All");
+  const [search, setSearch] = useState("");
+  const [sort, setSort] = useState("curated");
+  const categories = [
+    "All",
+    ...Array.from(new Set(products.map((p) => p.occasion).filter(Boolean))),
+  ];
+  const filtered = products
+    .filter(
+      (p) =>
+        (filter === "All" || p.occasion === filter) &&
+        p.name.toLowerCase().includes(search.toLowerCase()),
+    )
+    .sort((a, b) =>
+      sort === "low"
+        ? a.price - b.price
+        : sort === "high"
+          ? b.price - a.price
+          : 0,
+    );
   return (
-    <Link
-      href={`/collections/${product.slug}`}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{ display: 'block', textDecoration: 'none' }}
-    >
-      <div style={{
-        position: 'relative',
-        aspectRatio: '4/5',
-        overflow: 'hidden',
-        marginBottom: '16px',
-        backgroundColor: 'var(--color-surface)',
-      }}>
-        {imageUrl ? (
-          <Image
-            src={imageUrl}
-            alt={product.name}
-            fill
-            style={{ objectFit: 'cover', transition: 'transform 600ms ease', transform: hovered ? 'scale(1.04)' : 'scale(1)' }}
-            sizes="(max-width: 768px) 50vw, 33vw"
-          />
-        ) : (
-          <div style={{
-            position: 'absolute', inset: 0,
-            background: 'linear-gradient(145deg, #D4B8A0 0%, #C4A882 100%)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '5rem',
-            transition: 'transform 600ms ease',
-            transform: hovered ? 'scale(1.04)' : 'scale(1)',
-          }}>
-            <span style={{ opacity: 0.15 }}>✿</span>
-          </div>
-        )}
-
-        {product.tag && (
-          <div style={{
-            position: 'absolute', top: '14px', left: '14px',
-            backgroundColor: 'var(--color-bg)',
-            padding: '4px 10px',
-            fontFamily: 'var(--font-body)',
-            fontSize: '0.6rem',
-            letterSpacing: '0.15em',
-            textTransform: 'uppercase',
-            color: 'var(--color-accent)',
-          }}>
-            {product.tag}
-          </div>
-        )}
-
-        <div style={{
-          position: 'absolute', inset: 0,
-          backgroundColor: 'rgba(30,27,24,0.08)',
-          opacity: hovered ? 1 : 0,
-          transition: 'opacity 300ms ease',
-          display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
-          paddingBottom: '24px',
-        }}>
-          <span style={{
-            fontFamily: 'var(--font-body)',
-            fontSize: '0.65rem',
-            letterSpacing: '0.18em',
-            textTransform: 'uppercase',
-            color: 'var(--color-bg)',
-            borderBottom: '1px solid rgba(250,250,247,0.6)',
-            paddingBottom: '2px',
-            transform: hovered ? 'translateY(0)' : 'translateY(8px)',
-            transition: 'transform 300ms ease',
-          }}>
-            View Details
-          </span>
-        </div>
-      </div>
-
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
+    <main id="top" className="editorial-page">
+      <div className="page-heading album-heading">
         <div>
-          <div style={{
-            fontFamily: 'var(--font-body)',
-            fontSize: '0.62rem',
-            letterSpacing: '0.15em',
-            textTransform: 'uppercase',
-            color: 'var(--color-text-soft)',
-            marginBottom: '4px',
-          }}>
-            {product.occasion}
-          </div>
-          <div style={{
-            fontFamily: 'var(--font-display)',
-            fontSize: '1.1rem',
-            fontWeight: 400,
-            color: 'var(--color-heading)',
-          }}>
-            {product.name}
-          </div>
-        </div>
-        <div style={{
-          fontFamily: 'var(--font-body)',
-          fontSize: '0.85rem',
-          color: 'var(--color-accent)',
-          whiteSpace: 'nowrap',
-          marginTop: '18px',
-        }}>
-          from ${product.price}
-        </div>
-      </div>
-    </Link>
-  )
-}
-
-export default function CollectionsClient({ products }: { products: SanityProduct[] }) {
-  const [activeFilter, setActiveFilter] = useState('All')
-
-  const filtered = activeFilter === 'All'
-    ? products
-    : products.filter(p => p.occasion === activeFilter)
-
-  return (
-    <div style={{ backgroundColor: 'var(--color-bg)', minHeight: '100vh' }}>
-
-      {/* Page Header */}
-      <div style={{
-        padding: '160px 80px 64px',
-        borderBottom: '1px solid var(--color-border)',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'flex-end',
-      }}>
-        <div>
-          <span style={{
-            fontFamily: 'var(--font-body)',
-            fontSize: '0.7rem',
-            letterSpacing: '0.2em',
-            textTransform: 'uppercase',
-            color: 'var(--color-accent)',
-            display: 'block',
-            marginBottom: '12px',
-          }}>
-            All Arrangements
-          </span>
-          <h1 style={{
-            fontFamily: 'var(--font-display)',
-            fontSize: 'clamp(2.5rem, 4vw, 4.5rem)',
-            fontWeight: 300,
-            color: 'var(--color-heading)',
-            lineHeight: 1.05,
-          }}>
-            Our <em style={{ fontStyle: 'italic' }}>Collections</em>
+          <span className="eyebrow">THE JUPEANG COLLECTION</span>
+          <h1>
+            For your
+            <br />
+            <em>little world.</em>
           </h1>
         </div>
-        <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.8rem', color: 'var(--color-text-soft)' }}>
-          {filtered.length} {filtered.length === 1 ? 'arrangement' : 'arrangements'}
-        </div>
+        <p>
+          Things to give. Things to keep.
+          <br />
+          Find something that feels like you.
+        </p>
       </div>
-
-      {/* Filters */}
-      <div style={{
-        padding: '28px 80px',
-        borderBottom: '1px solid var(--color-border)',
-        display: 'flex',
-        gap: '8px',
-        flexWrap: 'wrap',
-      }}>
-        {FILTERS.map(filter => (
+      <div className="filter-bar">
+        {categories.map((c) => (
           <button
-            key={filter}
-            onClick={() => setActiveFilter(filter)}
-            style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: '0.7rem',
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-              padding: '8px 20px',
-              border: '1px solid',
-              borderColor: activeFilter === filter ? 'var(--color-heading)' : 'var(--color-border)',
-              backgroundColor: activeFilter === filter ? 'var(--color-heading)' : 'transparent',
-              color: activeFilter === filter ? 'var(--color-bg)' : 'var(--color-text-soft)',
-              cursor: 'pointer',
-              transition: 'all 200ms ease',
-            }}
+            key={c}
+            onClick={() => setFilter(c)}
+            aria-pressed={filter === c}
           >
-            {filter}
+            {c === "All" ? "Everything" : c}
           </button>
         ))}
-      </div>
-
-      {/* Grid or empty state */}
-      {filtered.length === 0 ? (
-        <div style={{ padding: '120px 80px', textAlign: 'center' }}>
-          <div style={{ fontSize: '3rem', opacity: 0.15, marginBottom: '24px' }}>✿</div>
-          <p style={{ fontFamily: 'var(--font-display)', fontSize: '1.3rem', fontStyle: 'italic', color: 'var(--color-text-soft)' }}>
-            {products.length === 0
-              ? 'No products yet — add some in the Studio.'
-              : `No ${activeFilter} arrangements right now.`}
-          </p>
+        <div className="shop-search">
+          <input
+            aria-label="Search the shop"
+            placeholder="Find something…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <select
+            aria-label="Sort products"
+            value={sort}
+            onChange={(e) => setSort(e.target.value)}
+          >
+            <option value="curated">Curated order</option>
+            <option value="low">Price: low to high</option>
+            <option value="high">Price: high to low</option>
+          </select>
+          <span>{filtered.length} pieces</span>
         </div>
-      ) : (
-        <div style={{
-          padding: '64px 80px 120px',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '40px 28px',
-        }}>
-          {filtered.map(product => (
-            <ProductCard key={product._id} product={product} />
+      </div>
+      {filtered.length > 0 ? (
+        <div className="product-grid">
+          {filtered.map((p) => (
+            <Link href={`/collections/${p.slug}`} key={p._id}>
+              <div className="product-visual">
+                {p.image ? (
+                  <Image
+                    src={urlFor(p.image).width(800).height(1000).url()}
+                    alt={p.name}
+                    fill
+                    sizes="(max-width:700px) 44vw, 30vw"
+                  />
+                ) : (
+                  <span>Photograph to follow</span>
+                )}
+              </div>
+              <div className="product-line">
+                <div>
+                  <h2>{p.name}</h2>
+                  <p>{p.occasion}</p>
+                </div>
+                <span>from ${p.price}</span>
+              </div>
+            </Link>
           ))}
         </div>
+      ) : (
+        <section className="empty-shop">
+          <div>
+            <span className="eyebrow">
+              {products.length
+                ? "A LITTLE DIFFERENT?"
+                : "GOOD THINGS TAKE THEIR TIME"}
+            </span>
+            <h2>
+              {products.length
+                ? "Nothing here just yet."
+                : "A collection in the making."}
+            </h2>
+            <p>
+              {products.length
+                ? "Try another search or explore everything."
+                : "Our shop is taking shape. While the shelves are being filled, come meet the world behind them."}
+            </p>
+            {products.length ? (
+              <button
+                className="text-link"
+                style={{ background: "none", border: 0, marginTop: 20 }}
+                onClick={() => {
+                  setFilter("All");
+                  setSearch("");
+                }}
+              >
+                Clear the filters ↗
+              </button>
+            ) : (
+              <Link className="round-link" href="/about">
+                <span>Discover our story</span>
+                <b>↗</b>
+              </Link>
+            )}
+          </div>
+          <div className="empty-shop-art">
+            <span>THE JUPEANG SHOP</span>
+            <b>
+              Good things.
+              <br />
+              <em>Soon.</em>
+            </b>
+            <span>GROWN WITH CARE. CHOSEN WITH FEELING.</span>
+          </div>
+        </section>
       )}
-
-    </div>
-  )
+    </main>
+  );
 }

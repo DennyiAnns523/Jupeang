@@ -4,6 +4,8 @@
 import { defineLive } from "next-sanity/live";
 import { client } from './client'
 
+if (!client) throw new Error('Sanity live content requires NEXT_PUBLIC_SANITY_PROJECT_ID')
+
 export const { sanityFetch, SanityLive } = defineLive({
   client,
 });

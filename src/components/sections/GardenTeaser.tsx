@@ -10,7 +10,7 @@ function formatDate(dateStr: string) {
 
 async function getLatestPosts(): Promise<SanityGardenPost[]> {
   try {
-    return await client.fetch(queries.latestGardenPosts)
+    return client ? await client.fetch(queries.latestGardenPosts) : []
   } catch {
     return []
   }

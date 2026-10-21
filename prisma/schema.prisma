@@ -1,0 +1,193 @@
+// Jupeang database schema.
+// Products and editorial content live in Sanity; everything that belongs to a
+// customer (accounts, orders, subscriptions) lives here.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  CUSTOMER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING_PAYMENT // created, waiting for Stripe
+  REQUESTED       // placed without online payment (Stripe not configured)
+  PAID
+  PREPARING
+  DISPATCHED
+  DELIVERED
+  CANCELLED
+}
+
+enum SubscriptionStatus {
+  INCOMPLETE
+  ACTIVE
+  PAST_DUE
+  PAUSED
+  CANCELED
+}
+
+enum PlanInterval {
+  WEEKLY
+  BIWEEKLY
+  MONTHLY
+}
+
+enum BillingCycle {
+  STANDARD
+  ANNUAL
+}
+
+// ── Auth.js ─────────────────────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  passwordHash  String?
+  role          Role      @default(CUSTOMER)
+  phone         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts      Account[]
+  sessions      Session[]
+  orders        Order[]
+  subscriptions Subscription[]
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+// ── Shop ────────────────────────────────────────────────────────────
+
+model Order {
+  id              String      @id @default(cuid())
+  ref             String      @unique
+  status          OrderStatus @default(PENDING_PAYMENT)
+  userId          String?
+  customerName    String
+  customerEmail   String
+  customerPhone   String?
+  address         String
+  city            String
+  postcode        String
+  notes           String?
+  totalCents      Int
+  currency        String      @default("usd")
+  stripeSessionId String?     @unique
+  stripePaymentId String?
+  paidAt          DateTime?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  user  User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  items OrderItem[]
+
+  @@index([userId])
+  @@index([status, createdAt])
+}
+
+model OrderItem {
+  id             String   @id @default(cuid())
+  orderId        String
+  productId      String // Sanity document _id
+  productName    String
+  size           String
+  addons         String[]
+  quantity       Int
+  unitPriceCents Int
+  message        String?
+  deliveryDate   String? // YYYY-MM-DD
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+}
+
+model Subscription {
+  id                   String             @id @default(cuid())
+  userId               String
+  plan                 PlanInterval
+  cycle                BillingCycle
+  status               SubscriptionStatus @default(INCOMPLETE)
+  priceCents           Int
+  recipientName        String
+  address              String
+  city                 String
+  postcode             String
+  notes                String?
+  stripeCustomerId     String?
+  stripeSubscriptionId String?            @unique
+  stripeSessionId      String?            @unique
+  currentPeriodEnd     DateTime?
+  cancelAtPeriodEnd    Boolean            @default(false)
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// ── Infrastructure ──────────────────────────────────────────────────
+
+// Stripe retries webhooks; each event is processed once.
+model StripeEvent {
+  id          String   @id
+  type        String
+  processedAt DateTime @default(now())
+}
+
+// Fixed-window rate limiting that works across serverless instances.
+model RateLimit {
+  key       String   @id
+  count     Int
+  expiresAt DateTime
+
+  @@index([expiresAt])
+}

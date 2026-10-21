@@ -185,7 +185,7 @@ export default function GardenPostPage() {
 
   useEffect(() => {
     if (!slug) return
-    client.fetch(queries.gardenPostBySlug, { slug })
+    (client ? client.fetch(queries.gardenPostBySlug, { slug }) : Promise.resolve(null))
       .then((data: SanityGardenPost) => { setPost(data); setLoading(false) })
       .catch(() => setLoading(false))
   }, [slug])

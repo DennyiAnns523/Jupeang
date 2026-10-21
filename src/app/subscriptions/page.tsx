@@ -2,13 +2,14 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { ANNUAL_DISCOUNT, PLANS } from '@/lib/pricing'
 
 const plans = [
   {
     id: 'weekly',
     name: 'Weekly',
     tagline: 'For the flower lover',
-    price: 45,
+    price: PLANS.weekly.price,
     frequency: 'per week',
     features: [
       'Fresh seasonal arrangement every week',
@@ -22,7 +23,7 @@ const plans = [
     id: 'biweekly',
     name: 'Bi-Weekly',
     tagline: 'Our most popular',
-    price: 65,
+    price: PLANS.biweekly.price,
     frequency: 'per delivery',
     features: [
       'Larger arrangement every two weeks',
@@ -37,7 +38,7 @@ const plans = [
     id: 'monthly',
     name: 'Monthly',
     tagline: 'A monthly luxury',
-    price: 95,
+    price: PLANS.monthly.price,
     frequency: 'per month',
     features: [
       'Premium large arrangement monthly',
@@ -156,7 +157,7 @@ export default function SubscriptionsPage() {
       }}>
         {plans.map(plan => {
           const price = billingCycle === 'annual'
-            ? Math.round(plan.price * 0.85)
+            ? Math.round(plan.price * ANNUAL_DISCOUNT)
             : plan.price
 
           return (
@@ -273,7 +274,7 @@ export default function SubscriptionsPage() {
 
               {/* CTA */}
               <Link
-                href={`/checkout?plan=${plan.id}`}
+                href={`/subscriptions/start?plan=${plan.id}&cycle=${billingCycle}`}
                 style={{
                   display: 'block',
                   textAlign: 'center',

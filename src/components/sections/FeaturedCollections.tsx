@@ -4,6 +4,7 @@ import { client, urlFor, queries, type SanityProduct } from '@/lib/sanity'
 import FeaturedCard from './FeaturedCard'
 
 async function getFeatured(): Promise<SanityProduct[]> {
+  if (!client) return []
   try {
     return await client.fetch(queries.featuredProducts)
   } catch {

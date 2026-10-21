@@ -1,4 +1,10 @@
 import { NextResponse } from 'next/server'
+import { client, queries } from '@/lib/sanity'
+
+export const revalidate = 300
+
 export async function GET() {
-  return NextResponse.json({ error: 'Not implemented' }, { status: 501 })
+  if (!client) return NextResponse.json({ products: [] })
+  const products = await client.fetch(queries.allProducts)
+  return NextResponse.json({ products })
 }
