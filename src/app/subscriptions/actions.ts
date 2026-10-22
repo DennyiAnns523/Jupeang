@@ -58,7 +58,7 @@ export async function startSubscriptionAction(_: FormState, formData: FormData):
         recurring: input.cycle === 'annual'
           ? { interval: 'year' }
           : { interval: plan.stripe.interval, interval_count: plan.stripe.count },
-        product_data: { name: `Jupeang ${plan.name} flowers${input.cycle === 'annual' ? ' (annual)' : ''}` },
+        product_data: { name: `Üli ${plan.name} flowers${input.cycle === 'annual' ? ' (annual)' : ''}` },
       },
     }],
     success_url: `${siteUrl()}/account?subscribed=1`,

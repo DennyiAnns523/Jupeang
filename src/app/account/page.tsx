@@ -6,7 +6,7 @@ import { requireUser } from '@/lib/session'
 import { openBillingPortalAction } from './actions'
 import StatusBadge from './StatusBadge'
 
-export const metadata = { title: 'My account — Jupeang' }
+export const metadata = { title: 'My account — Üli' }
 
 const PLAN_NAMES = Object.fromEntries(Object.values(PLANS).map(p => [p.interval, p.name]))
 

@@ -3,7 +3,7 @@ import { PLAN_IDS, PLANS, planBillingAmount, planDeliveryPrice, type PlanId } fr
 import { requireUser } from '@/lib/session'
 import StartForm from './StartForm'
 
-export const metadata = { title: 'Start your subscription — Jupeang' }
+export const metadata = { title: 'Start your subscription — Üli' }
 
 export default async function StartSubscriptionPage({ searchParams }: {
   searchParams: Promise<{ plan?: string; cycle?: string }>

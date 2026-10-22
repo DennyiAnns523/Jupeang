@@ -1,4 +1,4 @@
-// Jupeang database schema.
+// Üli database schema.
 // Products and editorial content live in Sanity; everything that belongs to a
 // customer (accounts, orders, subscriptions) lives here.
 
@@ -190,4 +190,21 @@ model RateLimit {
   expiresAt DateTime
 
   @@index([expiresAt])
+}
+
+// ── Visitor stats ───────────────────────────────────────────────────
+
+// One row per page view. No cookies and no IP addresses are stored:
+// `visitor` is a hash that changes every day, so it can count unique
+// visitors for a day but can't follow anyone over time.
+model PageView {
+  id        String   @id @default(cuid())
+  path      String
+  referrer  String? // the referring site's host, e.g. "instagram.com"
+  device    String // "mobile", "tablet" or "desktop"
+  country   String? // two-letter code from the host, when available
+  visitor   String
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
 }

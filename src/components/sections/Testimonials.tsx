@@ -17,7 +17,7 @@ const testimonials = [
   },
   {
     id: 3,
-    quote: 'Jupeang did our entire wedding floristry. The white elegance collection was beyond what we imagined.',
+    quote: 'Üli did our entire wedding floristry. The white elegance collection was beyond what we imagined.',
     author: 'Priya & Rohan',
     occasion: 'Wedding',
   },

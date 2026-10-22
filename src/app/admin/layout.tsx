@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { requireAdmin } from '@/lib/session'
 
-export const metadata = { title: 'Shop admin — Jupeang', robots: { index: false } }
+export const metadata = { title: 'Shop admin — Üli', robots: { index: false } }
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   await requireAdmin()
@@ -13,6 +13,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <nav className="pt-sidenav" aria-label="Admin">
           <Link href="/admin">Orders</Link>
           <Link href="/admin/subscriptions">Subscriptions</Link>
+          <Link href="/admin/visitors">Visitors</Link>
           <Link href="/studio">Content studio</Link>
           <Link href="/account">My account</Link>
         </nav>

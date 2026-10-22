@@ -40,7 +40,7 @@ export function LoginForm({ callbackUrl }: { callbackUrl: string }) {
       <Field label="Password" name="password" type="password" autoComplete="current-password" />
       <button className="pt-button" disabled={pending}>{pending ? 'Signing in…' : 'Sign in'}</button>
       <p className="pt-muted">
-        New to Jupeang? <Link className="pt-link" href={`/auth/signup?callbackUrl=${encodeURIComponent(callbackUrl)}`}>Create an account</Link>
+        New to Üli? <Link className="pt-link" href={`/auth/signup?callbackUrl=${encodeURIComponent(callbackUrl)}`}>Create an account</Link>
       </p>
     </form>
   )

@@ -14,8 +14,8 @@ export default function Navbar() {
   if (path === "/terrace" || path.startsWith("/studio")) return null;
   return (
     <header className={path === "/" ? "site-nav is-overlay" : "site-nav"}>
-      <Link href="/" className="wordmark" aria-label="Jupeang home">
-        jupeang<span>Objects. Stories. Growing things.</span>
+      <Link href="/" className="wordmark" aria-label="Üli home">
+        üli<span>Flowers • Vegetables • Homegrown</span>
       </Link>
       <nav aria-label="Main navigation">
         {links.map(([label, href]) => (

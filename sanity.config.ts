@@ -13,12 +13,24 @@ import {apiVersion, dataset, projectId} from './sanity/env'
 import {schema} from './sanity/schemaTypes'
 import {structure} from './sanity/structure'
 
+const SINGLETONS = new Set(['homePage', 'album'])
+
 export default defineConfig({
   basePath: '/studio',
   projectId,
   dataset,
   // Add and edit the content schema in the './sanity/schemaTypes' folder
-  schema,
+  schema: {
+    ...schema,
+    // The home page and album are single documents: no "new" button for them
+    templates: (templates) => templates.filter(({schemaType}) => !SINGLETONS.has(schemaType)),
+  },
+  document: {
+    actions: (actions, {schemaType}) =>
+      SINGLETONS.has(schemaType)
+        ? actions.filter(({action}) => action && ['publish', 'discardChanges', 'restore'].includes(action))
+        : actions,
+  },
   plugins: [
     structureTool({structure}),
     // Vision is for querying with GROQ from inside the Studio

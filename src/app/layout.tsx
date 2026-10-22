@@ -5,11 +5,12 @@ import './portal.css'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import CartDrawer from '@/components/layout/CartDrawer'
+import VisitTracker from '@/components/layout/VisitTracker'
 import { CartProvider } from '@/lib/cartContext'
 
 export const metadata: Metadata = {
-  title: 'Jupeang — Objects, stories & growing things',
-  description: 'A shop, a story, a collection of moments. Discover the world of Jupeang.',
+  title: 'Üli — From a seed, life begins.',
+  description: 'Flowers, vegetables and homegrown things from the rooftop garden of Pauwau Konyak.',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -21,6 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
           <CartDrawer />
           <Footer />
+          <VisitTracker />
         </CartProvider>
       </body>
     </html>

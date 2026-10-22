@@ -32,7 +32,8 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
         const bySlug = client ? await client.fetch(
           `*[_type == "product" && slug.current == $slug][0]{
             _id, name, "slug": slug.current, occasion, price, tag,
-            description, careInstructions, image, gallery, featured, inStock
+            description, careInstructions, image, gallery, featured,
+            "inStock": coalesce(inStock, true), restockNote
           }`,
           { slug: id }
         ) : null
@@ -85,6 +86,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
     setSelectedAddons(prev => prev.includes(addonId) ? prev.filter(a => a !== addonId) : [...prev, addonId])
 
   const handleAdd = () => {
+    if (!product.inStock) return
     addItem({
       productId: product._id,
       name: product.name,
@@ -348,20 +350,29 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
             />
           </div>
 
-          {/* Add to cart */}
+          {/* Add to cart, or a sold-out notice that says it'll be back */}
+          {!product.inStock && (
+            <p style={{
+              fontFamily: 'var(--font-display)', fontStyle: 'italic', fontSize: '1.15rem',
+              color: 'var(--color-heading)', marginBottom: '14px',
+            }}>
+              Sold out for now. {product.restockNote || 'Back soon.'}
+            </p>
+          )}
           <button
             onClick={handleAdd}
+            disabled={!product.inStock}
             style={{
               width: '100%', padding: '18px',
-              backgroundColor: added ? 'var(--color-accent)' : 'var(--color-heading)',
-              color: 'var(--color-bg)', border: 'none',
+              backgroundColor: !product.inStock ? 'var(--color-surface)' : added ? 'var(--color-accent)' : 'var(--color-heading)',
+              color: product.inStock ? 'var(--color-bg)' : 'var(--color-text-soft)', border: 'none',
               fontFamily: 'var(--font-body)', fontSize: '0.75rem',
               letterSpacing: '0.18em', textTransform: 'uppercase',
-              cursor: 'pointer', transition: 'background-color 300ms ease',
+              cursor: product.inStock ? 'pointer' : 'not-allowed', transition: 'background-color 300ms ease',
               marginBottom: '16px',
             }}
           >
-            {added ? '✓ Added to Bag' : `Add to Bag — $${total}`}
+            {!product.inStock ? 'Sold out' : added ? '✓ Added to Bag' : `Add to Bag — $${total}`}
           </button>
 
           {/* Care instructions */}

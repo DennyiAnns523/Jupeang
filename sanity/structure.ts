@@ -2,8 +2,15 @@ import type { StructureResolver } from 'sanity/structure'
 
 export const structure: StructureResolver = (S) =>
   S.list()
-    .title('Jupeang')
+    .title('Üli')
     .items([
+      S.listItem()
+        .title('🏡  Home page')
+        .child(S.document().schemaType('homePage').documentId('homePage').title('Home page')),
+      S.listItem()
+        .title('📷  Album')
+        .child(S.document().schemaType('album').documentId('album').title('Album')),
+      S.divider(),
       S.listItem()
         .title('🌸  Shop')
         .child(

@@ -630,6 +630,26 @@ button {
   font-size: 11px;
   color: var(--color-text-soft);
 }
+.sold-out-tag {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 1;
+  padding: 6px 10px;
+  background: var(--color-bg);
+  font-size: 9px !important;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--color-heading) !important;
+}
+.is-sold-out .product-visual img {
+  filter: grayscale(0.6);
+  opacity: 0.7;
+}
+.restock-note {
+  font-style: italic;
+  color: var(--color-text-soft);
+}
 .product-line {
   display: flex;
   justify-content: space-between;

@@ -1,7 +1,9 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Caveat } from "next/font/google";
 import styles from "./HomeExperience.module.css";
-import { BedScene, PotRow, TerraceScene } from "./GardenArt";
+import type { HomeContent } from "@/lib/siteContent";
+import { BedScene, PotRow } from "./GardenArt";
 
 const hand = Caveat({ subsets: ["latin"], weight: ["500", "700"] });
 
@@ -12,6 +14,9 @@ const seasons = [
   { months: [5, 6, 7, 8], headline: "the rain is doing the watering.", note: "Monsoon. Hydrangeas heavy, everything green." },
   { months: [9, 10, 11], headline: "the chrysanthemums are out.", note: "Full bloom. Every pot on the roof is flowering." },
 ];
+
+// The harvest prints hang slightly crooked, each at its own angle.
+const tilts = [-2, 1.5, -1, 2];
 
 const beds = [
   {
@@ -65,7 +70,7 @@ function PlantTag({ children, small }: { children: React.ReactNode; small?: stri
   );
 }
 
-export default function HomeExperience() {
+export default function HomeExperience({ content }: { content: HomeContent }) {
   const month = new Date().getMonth();
   const season = seasons.find((s) => s.months.includes(month)) ?? seasons[3];
   const today = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long" });
@@ -74,25 +79,138 @@ export default function HomeExperience() {
     <main id="top" className={styles.garden}>
       {/* The gate: arrive on the roof */}
       <section className={styles.gate} aria-labelledby="gate-title">
-        <TerraceScene className={styles.gateScene} />
-        <div className={styles.gateWeather}>
-          <span>Today on the terrace · {today}</span>
-          <p>{season.note}</p>
-        </div>
         <div className={styles.gateText}>
-          <PlantTag small="You are here">The gate</PlantTag>
+          <PlantTag small="Flowers • Vegetables • Homegrown">Welcome to Üli</PlantTag>
           <h1 id="gate-title">
-            Come in —<br />
-            <em>{season.headline}</em>
+            From a seed,
+            <br />
+            <em>life begins.</em>
           </h1>
           <p>
-            A rooftop garden above the hills, and the small shop that grew out of it.
-            Wander as long as you like.
+            <mark className={styles.name}>Pauwau</mark>&rsquo;s rooftop garden above
+            the hills, and the small shop that grew out of it. Flowers in the pots,
+            vegetables in the beds. Wander as long as you like.
           </p>
+          <div className={styles.gateWeather}>
+            <span>Today on the terrace · {today}</span>
+            <p>
+              <span className={styles.season}>{season.headline}</span> {season.note}
+            </p>
+          </div>
+          <a href="#growing" className={styles.stepIn}>
+            Step inside <b aria-hidden="true">↓</b>
+          </a>
         </div>
-        <a href="#plan" className={styles.stepIn}>
-          Step inside <b aria-hidden="true">↓</b>
-        </a>
+
+        <div className={styles.collage}>
+          <figure className={styles.collageMain}>
+            <Image
+              src={content.heroPhoto.src}
+              alt={content.heroPhoto.alt}
+              fill
+              priority
+              sizes="(max-width: 800px) 80vw, 34vw"
+            />
+            {content.heroPhoto.caption && (
+              <figcaption className={hand.className}>{content.heroPhoto.caption}</figcaption>
+            )}
+          </figure>
+          <figure className={styles.collageArch}>
+            <video
+              src={content.heroVideo.src}
+              poster={content.heroVideo.poster}
+              autoPlay
+              muted
+              loop
+              playsInline
+              aria-label={content.heroVideo.caption ?? "A moment from the garden"}
+            />
+            {content.heroVideo.caption && (
+              <figcaption className={hand.className}>{content.heroVideo.caption}</figcaption>
+            )}
+          </figure>
+          <figure className={styles.collageSnap}>
+            <Image
+              src={content.heroPrint.src}
+              alt={content.heroPrint.alt}
+              fill
+              sizes="(max-width: 800px) 40vw, 14vw"
+            />
+          </figure>
+        </div>
+      </section>
+
+      {/* What grows here: flowers in the pots, vegetables in the beds */}
+      <section id="growing" className={styles.growing} aria-labelledby="growing-title">
+        <div className={styles.growingIntro}>
+          <PlantTag small="Grown from seed">In Pauwau&rsquo;s garden</PlantTag>
+          <h2 id="growing-title">
+            Flowers and vegetables,
+            <br />
+            <em>and many more.</em>
+          </h2>
+        </div>
+        <div className={styles.growingLists}>
+          {[
+            { label: "In the flower pots", items: content.flowers },
+            { label: "In the vegetable beds", items: content.vegetables },
+          ].map((list) => (
+            <div key={list.label}>
+              <span className="eyebrow">{list.label.toUpperCase()}</span>
+              <ul className={styles.growList}>
+                {list.items.map((item) => (
+                  <li key={item.name}>
+                    {item.photo ? (
+                      <span className={styles.plantPhoto}>
+                        <Image src={item.photo} alt="" fill sizes="96px" />
+                      </span>
+                    ) : (
+                      <span className={styles.swatch} style={{ background: item.colour }} aria-hidden="true" />
+                    )}
+                    <h3>{item.name}</h3>
+                    <p>{item.note}</p>
+                  </li>
+                ))}
+                <li className={styles.growMore}>
+                  <h3>&hellip;and many more</h3>
+                  <p>Something new every season.</p>
+                </li>
+              </ul>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* The harvest: real photographs, pinned up like prints */}
+      <section className={styles.harvest} aria-labelledby="harvest-title">
+        <div className={styles.harvestIntro}>
+          <span className="eyebrow">FROM THE HARVEST BASKET</span>
+          <h2 id="harvest-title">
+            Picked this morning,
+            <br />
+            <em>on the table by noon.</em>
+          </h2>
+        </div>
+        <ul className={styles.prints}>
+          {content.harvest.map((photo, i) => (
+            <li key={photo.src} style={{ transform: `rotate(${tilts[i % tilts.length]}deg)` }}>
+              <div className={styles.printPhoto}>
+                <Image src={photo.src} alt={photo.alt} fill sizes="(max-width: 800px) 45vw, 22vw" />
+              </div>
+              <span className={hand.className}>{photo.caption}</span>
+            </li>
+          ))}
+        </ul>
+        <div className={styles.harvestLinks}>
+          <Link className="round-link" href="/collections">
+            <span>Visit the shop</span>
+            <b aria-hidden="true">↗</b>
+          </Link>
+          <Link className="round-link" href="/album">
+            <span>See more of the garden</span>
+            <b aria-hidden="true">↗</b>
+          </Link>
+        </div>
       </section>
 
       {/* The plan: the terrace from above */}
@@ -149,14 +267,15 @@ export default function HomeExperience() {
 
       {/* The way out: the real photographs live elsewhere */}
       <section className={styles.gardener} aria-labelledby="gardener-title">
-        <PlantTag small="On the way out">The gardener</PlantTag>
+        <PlantTag small="On the way out · The gardener">Pauwau Konyak</PlantTag>
         <blockquote id="gardener-title">
           &ldquo;Not everything needs to be big to become{" "}
           <em>something beautiful.</em>&rdquo;
         </blockquote>
         <p>
-          Everything here is grown, potted and carried up the stairs by hand.
-          The real terrace, and the people who look after it, are in the album.
+          Üli is Pauwau Konyak&rsquo;s garden. Every flower and vegetable here is
+          grown from seed, potted and carried up the stairs by her hand. The real
+          terrace, and the gardener who looks after it, are in the album.
         </p>
         <div className={styles.gardenerLinks}>
           <Link className="round-link" href="/album">

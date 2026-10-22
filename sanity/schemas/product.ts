@@ -89,13 +89,27 @@ export default defineType({
       title: 'In Stock',
       type: 'boolean',
       initialValue: true,
+      description: "Switch off when it runs out. It stays in the shop marked \"Sold out\" and can't be ordered until you switch it back on.",
+    }),
+    defineField({
+      name: 'restockNote',
+      title: 'When is it coming back?',
+      type: 'string',
+      description: 'Optional, shown under "Sold out", e.g. "Back in spring". Leave empty for "Back soon".',
+      hidden: ({ document }) => document?.inStock !== false,
     }),
   ],
   preview: {
     select: {
       title: 'name',
-      subtitle: 'occasion',
+      occasion: 'occasion',
+      inStock: 'inStock',
       media: 'image',
     },
+    prepare: ({ title, occasion, inStock, media }) => ({
+      title,
+      subtitle: inStock === false ? `Sold out · ${occasion ?? ''}` : occasion,
+      media,
+    }),
   },
 })

@@ -17,7 +17,8 @@ const PRODUCT_FIELDS = `
   image,
   gallery,
   featured,
-  inStock
+  "inStock": coalesce(inStock, true),
+  restockNote
 `
 
 const GARDEN_CARD_FIELDS = `
@@ -35,12 +36,13 @@ const GARDEN_CARD_FIELDS = `
 export const queries = {
   // Shop
   featuredProducts: `
-    *[_type == "product" && featured == true && inStock == true] | order(_createdAt asc) {
+    *[_type == "product" && featured == true && inStock != false] | order(_createdAt asc) {
       ${PRODUCT_FIELDS}
     }
   `,
+  // Sold-out products stay listed (marked "Sold out") so people know they'll return
   allProducts: `
-    *[_type == "product" && inStock == true] | order(_createdAt asc) {
+    *[_type == "product"] | order(_createdAt asc) {
       ${PRODUCT_FIELDS}
     }
   `,
@@ -78,6 +80,7 @@ export type SanityProduct = {
   gallery?: Array<{ asset: { _ref: string } }>
   featured: boolean
   inStock: boolean
+  restockNote?: string
 }
 
 export type SanityGardenPost = {

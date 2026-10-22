@@ -40,7 +40,7 @@ export async function sendOrderEmails(order: OrderPayload, { paid = false } = {}
       to: ownerEmail,
       subject: `New ${paid ? 'Paid Order' : 'Order Request'} ${order.orderRef} — ${order.customerName}`,
       text: [
-        `NEW ${kind} — JUPEANG`,
+        `NEW ${kind} — ÜLI`,
         `Order: ${order.orderRef}`,
         '',
         `Customer: ${order.customerName}`,
@@ -66,7 +66,7 @@ export async function sendOrderEmails(order: OrderPayload, { paid = false } = {}
   await resend.emails.send({
     from: fromAddr,
     to: order.customerEmail,
-    subject: `Your Jupeang ${paid ? 'order' : 'order request'} — ${order.orderRef}`,
+    subject: `Your Üli ${paid ? 'order' : 'order request'} — ${order.orderRef}`,
     text: [
       `Hi ${order.customerName.split(' ')[0]},`,
       '',
@@ -85,7 +85,7 @@ export async function sendOrderEmails(order: OrderPayload, { paid = false } = {}
       'Questions? Just reply to this email.',
       '',
       'With care,',
-      'Jupeang',
+      'Üli',
     ].join('\n'),
   })
 }

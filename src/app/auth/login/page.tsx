@@ -4,7 +4,7 @@ import { safeRedirectPath } from '@/lib/security'
 import { LoginForm } from '../AuthForms'
 import GoogleButton from '../GoogleButton'
 
-export const metadata = { title: 'Sign in — Jupeang' }
+export const metadata = { title: 'Sign in — Üli' }
 
 // Auth.js redirects here with ?error=… for OAuth problems
 const OAUTH_ERRORS: Record<string, string> = {

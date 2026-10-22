@@ -2,20 +2,15 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-const photos = [
-  ["IMG-20251127-WA0049.jpg", "A place to pause", "The terrace"],
-  ["IMG-20251209-WA0015.jpg", "Every shade of pink", "The little details"],
-  ["IMG-20251109-WA0019.jpg", "The hands behind it", "Our people"],
-  ["IMG-20250617-WA0015.jpg", "Something worth holding", "Our people"],
-  ["IMG-20251127-WA0053.jpg", "Stay a little longer", "The terrace"],
-];
-export default function Album() {
+import type { AlbumContent } from "@/lib/siteContent";
+export default function Album({ photos, film }: AlbumContent) {
   const [active, setActive] = useState(0);
   const [filter, setFilter] = useState("All moments");
   const dialog = useRef<HTMLDialogElement>(null);
   const video = useRef<HTMLVideoElement>(null);
+  const categories = ["All moments", ...new Set(photos.map((p) => p.category))];
   const filtered = photos.filter(
-    (p) => filter === "All moments" || p[2] === filter,
+    (p) => filter === "All moments" || p.category === filter,
   );
   const photo = filtered[active] ?? filtered[0];
   function move(delta: number) {
@@ -37,7 +32,7 @@ export default function Album() {
         </p>
       </div>
       <div className="filter-bar" aria-label="Filter photographs">
-        {["All moments", "The terrace", "The little details", "Our people"].map(
+        {categories.map(
           (label) => (
             <button
               key={label}
@@ -69,8 +64,8 @@ export default function Album() {
       >
         <div className="album-stage-image">
           <Image
-            src={`/images/${photo[0]}`}
-            alt={photo[1]}
+            src={photo.src}
+            alt={photo.alt}
             fill
             priority
             sizes="(max-width:700px) 90vw, 75vw"
@@ -81,7 +76,7 @@ export default function Album() {
             {String(active + 1).padStart(2, "0")} /{" "}
             {String(filtered.length).padStart(2, "0")}
           </span>
-          <h2>{photo[1]}</h2>
+          <h2>{photo.caption}</h2>
           <div>
             <button aria-label="Previous photograph" onClick={() => move(-1)}>
               ←
@@ -95,13 +90,13 @@ export default function Album() {
       <div className="album-contact-sheet">
         {filtered.map((p, i) => (
           <button
-            key={p[0]}
+            key={p.src}
             onClick={() => setActive(i)}
-            aria-label={p[1]}
+            aria-label={p.caption}
             aria-pressed={i === active}
           >
-            <Image src={`/images/${p[0]}`} alt="" width={150} height={110} />
-            <span>0{i + 1}</span>
+            <Image src={p.src} alt="" width={150} height={110} />
+            <span>{String(i + 1).padStart(2, "0")}</span>
           </button>
         ))}
       </div>
@@ -129,7 +124,7 @@ export default function Album() {
           controls
           playsInline
           preload="none"
-          src="/images/VID-20251217-WA0007.mp4"
+          src={film}
         />
       </dialog>
     </main>

@@ -12,7 +12,7 @@ const catalog = projectId
 export async function getProductsByIds(ids: string[]): Promise<Map<string, CatalogProduct>> {
   if (!catalog) throw new Error('Sanity is not configured (NEXT_PUBLIC_SANITY_PROJECT_ID)')
   const products = await catalog.fetch<CatalogProduct[]>(
-    `*[_type == "product" && _id in $ids]{ _id, name, price, inStock }`,
+    `*[_type == "product" && _id in $ids]{ _id, name, price, "inStock": coalesce(inStock, true) }`,
     { ids },
   )
   return new Map(products.map(p => [p._id, p]))

@@ -35,7 +35,10 @@ export async function POST(req: NextRequest) {
   const lines = []
   for (const item of items) {
     const product = products.get(item.productId)
-    if (!product || !product.inStock || !(product.price > 0)) {
+    if (product && !product.inStock) {
+      return NextResponse.json({ error: `${product.name} is sold out for now. Please remove it from your bag.` }, { status: 409 })
+    }
+    if (!product || !(product.price > 0)) {
       return NextResponse.json({ error: `${product?.name ?? 'An item in your bag'} is no longer available.` }, { status: 409 })
     }
     lines.push({

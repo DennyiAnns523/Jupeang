@@ -397,7 +397,7 @@ export default function GardenPostPage() {
             textTransform: 'uppercase',
             color: 'var(--color-muted)',
           }}>
-            Jupeang · The Garden
+            Üli · The Garden
           </span>
         </div>
       </div>

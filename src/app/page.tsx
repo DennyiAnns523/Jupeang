@@ -1,8 +1,10 @@
 import HomeExperience from "@/components/garden/HomeExperience";
+import { getHomeContent } from "@/lib/siteContent";
 
-// Re-render daily so "today on the terrace" and the season stay current.
-export const revalidate = 86400;
+// Re-check every minute, so edits in the Studio show up quickly and
+// "today on the terrace" stays current.
+export const revalidate = 60;
 
-export default function Home() {
-  return <HomeExperience />;
+export default async function Home() {
+  return <HomeExperience content={await getHomeContent()} />;
 }

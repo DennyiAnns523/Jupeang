@@ -312,3 +312,56 @@
     border-bottom: 1px solid var(--color-border);
   }
 }
+
+/* Visitors */
+.vs-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 180px;
+  padding: 12px;
+  background: var(--color-surface);
+}
+.vs-bar {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+}
+.vs-bar span {
+  display: block;
+  width: 100%;
+  min-height: 2px;
+  background: var(--color-accent);
+  opacity: 0.8;
+}
+.vs-bar:hover span {
+  opacity: 1;
+}
+.vs-axis {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 0.75rem;
+}
+.vs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 0 48px;
+}
+.vs-share {
+  display: grid;
+  grid-template-columns: 90px 1fr 48px;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  font-size: 0.85rem;
+}
+.vs-share b {
+  height: 10px;
+  background: var(--color-accent);
+  opacity: 0.8;
+}
+.vs-share span:last-child {
+  text-align: right;
+}

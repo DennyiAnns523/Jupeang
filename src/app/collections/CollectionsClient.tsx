@@ -22,17 +22,18 @@ export default function CollectionsClient({
         p.name.toLowerCase().includes(search.toLowerCase()),
     )
     .sort((a, b) =>
-      sort === "low"
+      Number(!a.inStock) - Number(!b.inStock) ||
+      (sort === "low"
         ? a.price - b.price
         : sort === "high"
           ? b.price - a.price
-          : 0,
+          : 0),
     );
   return (
     <main id="top" className="editorial-page">
       <div className="page-heading album-heading">
         <div>
-          <span className="eyebrow">THE JUPEANG COLLECTION</span>
+          <span className="eyebrow">THE ÜLI COLLECTION</span>
           <h1>
             For your
             <br />
@@ -77,8 +78,13 @@ export default function CollectionsClient({
       {filtered.length > 0 ? (
         <div className="product-grid">
           {filtered.map((p) => (
-            <Link href={`/collections/${p.slug}`} key={p._id}>
+            <Link
+              href={`/collections/${p.slug}`}
+              key={p._id}
+              className={p.inStock ? undefined : "is-sold-out"}
+            >
               <div className="product-visual">
+                {!p.inStock && <span className="sold-out-tag">Sold out</span>}
                 {p.image ? (
                   <Image
                     src={urlFor(p.image).width(800).height(1000).url()}
@@ -95,7 +101,11 @@ export default function CollectionsClient({
                   <h2>{p.name}</h2>
                   <p>{p.occasion}</p>
                 </div>
-                <span>from ${p.price}</span>
+                {p.inStock ? (
+                  <span>from ${p.price}</span>
+                ) : (
+                  <span className="restock-note">{p.restockNote || "Back soon"}</span>
+                )}
               </div>
             </Link>
           ))}
@@ -137,7 +147,7 @@ export default function CollectionsClient({
             )}
           </div>
           <div className="empty-shop-art">
-            <span>THE JUPEANG SHOP</span>
+            <span>THE ÜLI SHOP</span>
             <b>
               Good things.
               <br />

@@ -5,7 +5,7 @@ import { addonLabels } from '@/lib/pricing'
 import { requireUser } from '@/lib/session'
 import StatusBadge from '../StatusBadge'
 
-export const metadata = { title: 'My orders — Jupeang' }
+export const metadata = { title: 'My orders — Üli' }
 
 export default async function OrdersPage() {
   const user = await requireUser('/account/orders')

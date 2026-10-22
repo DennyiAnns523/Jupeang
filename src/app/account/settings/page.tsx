@@ -1,7 +1,7 @@
 import { requireUser } from '@/lib/session'
 import { PasswordForm, ProfileForm } from './SettingsForms'
 
-export const metadata = { title: 'Settings — Jupeang' }
+export const metadata = { title: 'Settings — Üli' }
 
 export default async function SettingsPage() {
   const user = await requireUser('/account/settings')

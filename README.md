@@ -1,4 +1,4 @@
-# Jupeang
+# Üli
 
 Florist shop and garden journal: Next.js 16, Sanity CMS for content, Postgres + Prisma for customer data, Auth.js for accounts, and Stripe for payments.
 

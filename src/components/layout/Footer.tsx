@@ -18,11 +18,11 @@ export default function Footer() {
         </div>
       </div>
       <Link href="/" className="footer-wordmark">
-        jupeang<span>®</span>
+        üli<span>®</span>
       </Link>
       <div className="footer-bottom">
-        <span>Konyak for flower. A world of our own.</span>
-        <span>© {new Date().getFullYear()} Jupeang</span>
+        <span>From a seed, life begins. Grown by Pauwau Konyak.</span>
+        <span>© {new Date().getFullYear()} Üli</span>
         <a href="#top">Back to the top ↑</a>
       </div>
     </footer>

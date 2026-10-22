@@ -15,7 +15,7 @@ const PETALS = [
 ]
 
 const TAGLINES = [
-  'Konyak · Flower',
+  'From a seed, life begins',
   'New Season Collection',
   'Same-Day Delivery',
   'Thoughtfully Arranged',
@@ -113,7 +113,7 @@ export default function Hero() {
           </span>
         </div>
 
-        {/* JUPEANG — clip reveal */}
+        {/* ÜLI — clip reveal */}
         <div style={{ overflow: 'hidden', marginBottom: 6 }}>
           <h1 style={{
             fontFamily: 'var(--font-display)',
@@ -125,7 +125,7 @@ export default function Hero() {
             textTransform: 'uppercase',
             animation: 'revealUp 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both',
           }}>
-            Jupeang
+            Üli
           </h1>
         </div>
 
@@ -287,10 +287,10 @@ export default function Hero() {
           overflow: 'hidden',
         }}
       >
-        {/* Real photo — mom with hydrangea on the terrace */}
+        {/* Real photo — Pauwau Konyak with hydrangea on the terrace */}
         <Image
           src="/images/IMG-20250617-WA0015.jpg"
-          alt="Mom holding a hydrangea on the terrace garden"
+          alt="Pauwau Konyak holding a hydrangea on the terrace garden"
           fill
           priority
           sizes="45vw"
@@ -401,7 +401,7 @@ export default function Hero() {
           }}>from $65</div>
         </div>
 
-        {/* Konyak language badge — top-right */}
+        {/* Brand badge — top-right */}
         <div style={{
           position: 'absolute',
           top: 28,
@@ -416,14 +416,14 @@ export default function Hero() {
             letterSpacing: '0.22em',
             textTransform: 'uppercase',
             color: 'rgba(61,56,50,0.4)',
-          }}>Jupeang</div>
+          }}>Üli</div>
           <div style={{
             fontFamily: 'var(--font-display)',
             fontSize: '0.78rem',
             fontStyle: 'italic',
             color: 'rgba(61,56,50,0.3)',
             marginTop: 2,
-          }}>Konyak for Flower</div>
+          }}>Flowers • Vegetables • Homegrown</div>
         </div>
 
       </div>
