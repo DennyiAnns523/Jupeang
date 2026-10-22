@@ -907,8 +907,9 @@ button {
     margin-left: 5px;
   }
   .footer-bottom {
-    flex-wrap: wrap;
-    font-size: 8px;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 10px;
   }
   .page-heading {
     padding: 45px 0 35px;
@@ -956,7 +957,7 @@ button {
     padding: 12px;
   }
   .album-stage-image {
-    height: 390px;
+    height: min(390px, 100vw);
   }
   .album-stage-caption {
     gap: 10px;

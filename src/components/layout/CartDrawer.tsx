@@ -33,7 +33,9 @@ export default function CartDrawer() {
         backgroundColor: 'var(--color-bg)',
         zIndex: 70,
         transform: isOpen ? 'translateX(0)' : 'translateX(100%)',
-        transition: 'transform 400ms ease',
+        // Hidden once it has slid away, so its shadow doesn't show at the screen edge
+        visibility: isOpen ? 'visible' : 'hidden',
+        transition: isOpen ? 'transform 400ms ease' : 'transform 400ms ease, visibility 0s 400ms',
         display: 'flex',
         flexDirection: 'column',
         boxShadow: '-8px 0 40px rgba(30,27,24,0.1)',
